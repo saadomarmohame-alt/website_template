@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omar Saad — Developer & Security Expert</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050508;--surface:#0c0c14;--card:#11111c;--border:#1e1e2e;--border2:#2a2a40;
+  --accent:#7c6aff;--accent2:#ff6b9d;--accent3:#00d9ff;--accent4:#39ff8c;
+  --kali:#1793d1;--kali2:#54d0ff;
+  --text:#f0f0ff;--muted:#7a7a9a;--muted2:#4a4a6a;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;cursor:none}
+body.ar{font-family:'Cairo',sans-serif}
+/* === CURSOR === */
+.cursor{position:fixed;width:12px;height:12px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:screen}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(124,106,255,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .12s ease}
+.cursor.hover{width:20px;height:20px;background:var(--accent2)}
+.cursor-ring.hover{width:50px;height:50px;border-color:rgba(255,107,157,.4)}
+/* === BG === */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:.4}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+/* === PROGRESS === */
+#progress{position:fixed;top:0;left:0;height:2px;z-index:200;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));transition:width .1s linear;box-shadow:0 0 8px rgba(124,106,255,.6)}
+/* === NAV === */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:68px;background:rgba(5,5,8,.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);opacity:.35}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;cursor:none}
+.nav-avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;font-family:'Space Mono',monospace;box-shadow:0 0 16px rgba(124,106,255,.4)}
+.nav-name{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.nav-right{display:flex;align-items:center;gap:1.5rem}
+.nav-links{display:flex;gap:1.5rem}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:11px;font-family:'Space Mono',monospace;transition:color .2s;letter-spacing:.04em;position:relative;cursor:none;padding:4px 0}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.lang-btn{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:transparent;color:var(--accent);border:1px solid var(--border2);padding:6px 14px;border-radius:8px;cursor:none;transition:all .2s}
+.lang-btn:hover{background:rgba(124,106,255,.1);border-color:var(--accent)}
+/* === PAGES === */
+.page{display:none;position:relative;z-index:2;min-height:100vh;padding-top:68px}
+.page.active{display:block}
+/* === HERO PAGE === */
+.hero{max-width:1000px;margin:0 auto;padding:8rem 2.5rem 6rem;min-height:calc(100vh - 68px);display:flex;flex-direction:column;justify-content:center;gap:2rem}
+.status-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(57,255,140,.07);border:1px solid rgba(57,255,140,.2);color:var(--accent4);font-family:'Space Mono',monospace;font-size:11px;padding:6px 14px;border-radius:100px;width:fit-content}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--accent4);box-shadow:0 0 8px var(--accent4);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:11px;color:var(--accent4);letter-spacing:.15em;text-transform:uppercase;width:fit-content}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:24px;height:1px;background:var(--accent4)}
+.hero-name{font-size:clamp(3.5rem,8vw,7rem);font-weight:800;line-height:.95;letter-spacing:-.05em}
+.hero-name .line1{display:block;color:var(--text)}
+.hero-name .line2{display:block;background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 50%,var(--accent3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-name .age{font-family:'Space Mono',monospace;font-size:.22em;color:var(--muted);-webkit-text-fill-color:var(--muted);vertical-align:middle;margin-left:.3em;background:var(--card);border:1px solid var(--border2);padding:3px 10px;border-radius:6px;position:relative;top:-.1em;letter-spacing:.05em;font-weight:400}
+.hero-role{font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.06em;display:flex;align-items:center;flex-wrap:wrap;gap:.5rem}
+.role-sep{color:var(--border2)}
+.role-item{color:var(--accent3)}
+.hero-desc{font-size:18px;color:var(--muted);line-height:1.8;max-width:580px;font-weight:400}
+.hero-desc strong{color:var(--text);font-weight:600}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;padding-top:.5rem}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;cursor:none;transition:all .25s ease;border:1px solid;font-family:'Syne',sans-serif;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08),transparent);opacity:0;transition:opacity .25s}
+.btn:hover::before{opacity:1}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:0 4px 20px rgba(124,106,255,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,106,255,.5)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border2)}
+.btn-outline:hover{background:var(--card);border-color:var(--muted2);transform:translateY(-2px)}
+.btn-wa:hover{border-color:#25d366;color:#25d366;background:rgba(37,211,102,.08)}
+.btn-li:hover{border-color:#0a66c2;color:#0a66c2;background:rgba(10,102,194,.08)}
+.stats-row{display:flex;flex-wrap:wrap;gap:1px;background:var(--border);border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-top:1rem}
+.stat{flex:1;min-width:130px;background:var(--card);padding:1.5rem 1.75rem;display:flex;flex-direction:column;gap:.4rem;transition:background .2s}
+.stat:hover{background:#161625}
+.stat-num{font-size:2.2rem;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+/* === SECTION COMMON === */
+.section{max-width:1000px;margin:0 auto;padding:5rem 2.5rem}
+.section-tag{display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem}
+.section-tag::before{content:'//';opacity:.5}
+.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.04em;line-height:1;margin-bottom:3rem}
+.section-title span{background:linear-gradient(135deg,var(--text),var(--muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.divider{max-width:1000px;margin:0 auto;border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+/* === SKILLS === */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.skill-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.75rem;transition:all .3s ease;position:relative;overflow:hidden;cursor:default}
+.skill-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(124,106,255,.08),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.skill-card:hover::before{opacity:1}
+.skill-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 0 1px rgba(124,106,255,.1)}
+.skill-icon{font-size:28px;margin-bottom:1.25rem;display:block}
+.skill-name{font-size:16px;font-weight:700;margin-bottom:.5rem;letter-spacing:-.02em}
+.skill-desc{font-size:13px;color:var(--muted);line-height:1.65}
+.skill-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:1.25rem}
+.tag{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border2);padding:3px 9px;border-radius:5px;letter-spacing:.03em}
+/* === TECH STACK === */
+.tech-grid{display:flex;flex-wrap:wrap;gap:10px}
+.tech-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;transition:all .25s ease;cursor:default}
+.tech-pill:hover{border-color:var(--accent);background:rgba(124,106,255,.05);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.tech-pill .emoji{font-size:16px}
+.tech-pill .level{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted2);margin-left:2px;letter-spacing:.05em}
+/* === SERVICES === */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;display:flex;align-items:center;gap:1.25rem;transition:all .25s ease;cursor:default;position:relative;overflow:hidden}
+.service-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--accent2));opacity:0;transition:opacity .25s}
+.service-card:hover{border-color:var(--border2);transform:translateX(4px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.service-card:hover::after{opacity:1}
+.service-num{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted2);flex-shrink:0;letter-spacing:.05em}
+.service-name{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.service-arrow{margin-left:auto;color:var(--accent);opacity:0;transition:all .25s;font-size:16px;flex-shrink:0}
+.service-card:hover .service-arrow{opacity:1;transform:translateX(4px)}
+/* === CONTACT === */
+.contact-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.5rem;position:relative;overflow:hidden}
+.contact-box::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(124,106,255,.12),transparent 70%);pointer-events:none}
+.contact-box::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,157,.08),transparent 70%);pointer-events:none}
+.contact-box h3{font-size:1.6rem;font-weight:800;letter-spacing:-.04em;margin-bottom:.75rem;background:linear-gradient(135deg,var(--text),var(--muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.contact-box>p{font-size:14px;color:var(--muted);margin-bottom:2rem;line-height:1.7;max-width:500px}
+.contact-links{display:flex;flex-direction:column;gap:8px}
+.contact-link{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 18px;font-size:13px;font-family:'Space Mono',monospace;transition:all .25s ease;position:relative;overflow:hidden;cursor:none}
+.contact-link::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,rgba(124,106,255,.08),transparent);transition:width .3s}
+.contact-link:hover{border-color:var(--accent)}
+.contact-link:hover::before{width:100%}
+.contact-link.wa:hover{border-color:#25d366}
+.contact-link.wa:hover::before{background:linear-gradient(90deg,rgba(37,211,102,.08),transparent)}
+.contact-link.li:hover{border-color:#0a66c2}
+.contact-link.li:hover::before{background:linear-gradient(90deg,rgba(10,102,194,.08),transparent)}
+.contact-link svg{flex-shrink:0;opacity:.7;position:relative}
+.contact-link span{position:relative}
+.location-pill{display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:6px 14px;border-radius:8px;margin-top:1.25rem;letter-spacing:.03em}
+/* === KALI PAGE === */
+.kali-hero{background:linear-gradient(135deg,rgba(23,147,209,.06),rgba(84,208,255,.03));border:1px solid rgba(23,147,209,.2);border-radius:20px;padding:3rem;margin-bottom:3rem;position:relative;overflow:hidden}
+.kali-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(23,147,209,.1),transparent 70%);pointer-events:none}
+.kali-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(23,147,209,.1);border:1px solid rgba(23,147,209,.3);color:var(--kali2);font-family:'Space Mono',monospace;font-size:11px;padding:6px 16px;border-radius:100px;margin-bottom:1.5rem}
+.kali-title{font-size:clamp(2rem,4vw,3.5rem);font-weight:800;letter-spacing:-.04em;line-height:1;margin-bottom:1rem}
+.kali-title .k1{color:var(--text)}
+.kali-title .k2{background:linear-gradient(135deg,var(--kali),var(--kali2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.kali-desc{font-size:16px;color:var(--muted);line-height:1.8;max-width:600px}
+.kali-desc strong{color:var(--text)}
+.kali-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:2rem}
+.kali-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.75rem;position:relative;overflow:hidden;transition:all .3s ease}
+.kali-card:hover{border-color:rgba(23,147,209,.4);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 0 1px rgba(23,147,209,.1)}
+.kali-card-icon{font-size:26px;margin-bottom:1rem;display:block}
+.kali-card-title{font-size:15px;font-weight:700;margin-bottom:.5rem;color:var(--kali2)}
+.kali-card-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.kali-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:1rem}
+.kali-tool{font-family:'Space Mono',monospace;font-size:10px;color:var(--kali2);background:rgba(23,147,209,.08);border:1px solid rgba(23,147,209,.2);padding:3px 10px;border-radius:5px}
+/* === TERMINAL WIDGET === */
+.terminal{background:#0d1117;border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:2rem 0;font-family:'Space Mono',monospace;font-size:13px}
+.terminal-bar{background:#161b22;padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #30363d}
+.t-dot{width:12px;height:12px;border-radius:50%}
+.t-red{background:#ff5f57}.t-yellow{background:#febc2e}.t-green{background:#28c840}
+.terminal-title{font-size:11px;color:#8b949e;margin-left:8px;letter-spacing:.05em}
+.terminal-body{padding:1.5rem;line-height:2}
+.t-line{display:flex;align-items:baseline;gap:.5rem}
+.t-prompt{color:var(--kali2)}
+.t-root{color:#ff5f57}
+.t-cmd{color:var(--text)}
+.t-out{color:#8b949e;padding-left:1.2rem}
+.t-green-text{color:#28c840}
+.t-yellow-text{color:#febc2e}
+.t-cursor{display:inline-block;width:8px;height:14px;background:var(--kali2);animation:blink .8s step-end infinite;vertical-align:middle;margin-left:2px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+/* === LINUX PAGE === */
+.linux-banner{background:linear-gradient(135deg,rgba(57,255,140,.04),rgba(0,217,255,.04));border:1px solid rgba(57,255,140,.15);border-radius:20px;padding:2.5rem;margin-bottom:2.5rem;position:relative;overflow:hidden}
+.linux-banner::after{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:radial-gradient(ellipse at right,rgba(57,255,140,.06),transparent 70%)}
+.linux-distros{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:2rem 0}
+.distro-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center;transition:all .25s ease;cursor:default;position:relative;overflow:hidden}
+.distro-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.distro-icon{font-size:32px;margin-bottom:.75rem;display:block}
+.distro-name{font-size:14px;font-weight:700;margin-bottom:.3rem}
+.distro-level{font-family:'Space Mono',monospace;font-size:10px;padding:2px 10px;border-radius:100px;display:inline-block;margin-top:.5rem}
+.level-expert{background:rgba(57,255,140,.1);color:var(--accent4);border:1px solid rgba(57,255,140,.2)}
+.level-advanced{background:rgba(124,106,255,.1);color:var(--accent);border:1px solid rgba(124,106,255,.2)}
+.level-good{background:rgba(0,217,255,.1);color:var(--accent3);border:1px solid rgba(0,217,255,.2)}
+/* === PROJECTS PAGE === */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.project-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:all .3s ease;cursor:default}
+.project-card:hover{border-color:var(--border2);transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.project-img{height:160px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:48px}
+.project-img.p1{background:linear-gradient(135deg,rgba(124,106,255,.2),rgba(255,107,157,.15))}
+.project-img.p2{background:linear-gradient(135deg,rgba(23,147,209,.2),rgba(84,208,255,.1))}
+.project-img.p3{background:linear-gradient(135deg,rgba(57,255,140,.15),rgba(0,217,255,.1))}
+.project-img.p4{background:linear-gradient(135deg,rgba(255,107,157,.15),rgba(255,200,80,.1))}
+.project-body{padding:1.5rem}
+.project-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem}
+.project-tag{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);background:rgba(124,106,255,.08);border:1px solid rgba(124,106,255,.2);padding:2px 8px;border-radius:4px}
+.project-title{font-size:17px;font-weight:700;letter-spacing:-.02em;margin-bottom:.5rem}
+.project-desc{font-size:13px;color:var(--muted);line-height:1.65}
+.project-footer{display:flex;align-items:center;gap:10px;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
+.project-link{display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;transition:color .2s;cursor:none}
+.project-link:hover{color:var(--accent)}
+/* === ABOUT === */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+@media(max-width:768px){.about-grid{grid-template-columns:1fr}}
+.about-bio{font-size:16px;color:var(--muted);line-height:1.9}
+.about-bio strong{color:var(--text)}
+.about-bio p{margin-bottom:1.25rem}
+.timeline{display:flex;flex-direction:column;gap:0}
+.timeline-item{display:flex;gap:1.25rem;padding-bottom:1.75rem;position:relative}
+.timeline-item::before{content:'';position:absolute;left:7px;top:28px;bottom:0;width:1px;background:var(--border)}
+.timeline-item:last-child::before{display:none}
+.timeline-dot{width:16px;height:16px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);flex-shrink:0;margin-top:4px;box-shadow:0 0 10px rgba(124,106,255,.5)}
+.timeline-dot.kali{background:var(--kali)}
+.timeline-dot.green{background:var(--accent4)}
+.timeline-content{}
+.timeline-year{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted2);letter-spacing:.08em;margin-bottom:.25rem}
+.timeline-title{font-size:14px;font-weight:700;margin-bottom:.25rem}
+.timeline-desc{font-size:12px;color:var(--muted);line-height:1.6}
+/* === FOOTER === */
+footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:2rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-left{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted2)}
+.footer-left strong{color:var(--muted);font-weight:700}
+.footer-social{display:flex;gap:8px}
+.footer-social a{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--muted);text-decoration:none;transition:all .2s;cursor:none}
+.footer-social a:hover{border-color:var(--accent);color:var(--accent);background:rgba(124,106,255,.08)}
+/* === ANIMATIONS === */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+/* === RTL === */
+html[dir="rtl"] nav{flex-direction:row-reverse}
+html[dir="rtl"] .nav-right{flex-direction:row-reverse}
+html[dir="rtl"] .service-card:hover{transform:translateX(-4px)}
+html[dir="rtl"] .service-card:hover .service-arrow{transform:translateX(-4px)}
+html[dir="rtl"] .hero-name .age{margin-left:0;margin-right:.3em}
+html[dir="rtl"] footer{flex-direction:row-reverse}
+html[dir="rtl"] .timeline-item::before{left:auto;right:7px}
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  nav{padding:0 1.25rem}
+  .nav-links{display:none}
+  .hero{padding:5rem 1.25rem 4rem;min-height:auto}
+  .section{padding:4rem 1.25rem}
+  footer{padding:1.5rem 1.25rem}
+  .stats-row{flex-direction:column}
+  .kali-hero{padding:2rem}
+  .terminal-body{padding:1rem;font-size:11px}
+}
+/* === MOBILE NAV === */
+.mobile-nav-btn{display:none;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:6px 10px;border-radius:8px;cursor:none;font-size:16px}
+@media(max-width:768px){
+  .mobile-nav-btn{display:flex;align-items:center;justify-content:center}
+  .nav-links{display:none!important}
+}
+.mobile-menu{display:none;position:fixed;inset:0;top:68px;background:rgba(5,5,8,.97);backdrop-filter:blur(20px);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Space Mono',monospace;font-size:18px;color:var(--muted);text-decoration:none;cursor:none;transition:color .2s}
+.mobile-menu a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div id="progress"></div>
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <a href="#" class="nav-logo" onclick="showPage('home');return false">
+    <div class="nav-avatar">OS</div>
+    <span class="nav-name">Omar Saad</span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-links" id="navLinks">
+      <a href="#" onclick="showPage('home');return false" id="nav-home" class="active" data-en="Home" data-ar="الرئيسية">Home</a>
+      <a href="#" onclick="showPage('about');return false" id="nav-about" data-en="About" data-ar="عني">About</a>
+      <a href="#" onclick="showPage('skills');return false" id="nav-skills" data-en="Skills" data-ar="المهارات">Skills</a>
+      <a href="#" onclick="showPage('linux');return false" id="nav-linux" data-en="Linux" data-ar="لينكس">Linux</a>
+      <a href="#" onclick="showPage('projects');return false" id="nav-projects" data-en="Projects" data-ar="مشاريع">Projects</a>
+      <a href="#" onclick="showPage('contact');return false" id="nav-contact" data-en="Contact" data-ar="تواصل">Contact</a>
+    </div>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 عربي</button>
+    <button class="mobile-nav-btn" onclick="toggleMobile()" id="mobileBtn">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="showPage('home');toggleMobile();return false" data-en="Home" data-ar="الرئيسية">Home</a>
+  <a href="#" onclick="showPage('about');toggleMobile();return false" data-en="About" data-ar="عني">About</a>
+  <a href="#" onclick="showPage('skills');toggleMobile();return false" data-en="Skills" data-ar="المهارات">Skills</a>
+  <a href="#" onclick="showPage('linux');toggleMobile();return false" data-en="Linux / Kali" data-ar="لينكس / كالي">Linux / Kali</a>
+  <a href="#" onclick="showPage('projects');toggleMobile();return false" data-en="Projects" data-ar="مشاريع">Projects</a>
+  <a href="#" onclick="showPage('contact');toggleMobile();return false" data-en="Contact" data-ar="تواصل">Contact</a>
+</div>
+
+<!-- ===== PAGE: HOME ===== -->
+<div class="page active" id="page-home">
+<div class="hero">
+  <div class="status-badge reveal">
+    <span class="status-dot"></span>
+    <span data-en="Available for projects" data-ar="متاح للمشاريع">Available for projects</span>
+  </div>
+  <p class="hero-eyebrow reveal" data-en="Developer · Security · Egypt · 17" data-ar="مطوّر · أمن · مصر · 17 سنة">Developer · Security · Egypt · 17</p>
+  <h1 class="hero-name reveal">
+    <span class="line1">Omar</span>
+    <span class="line2">Saad<span class="age" data-en="17 y/o" data-ar="17 سنة">17 y/o</span></span>
+  </h1>
+  <p class="hero-role reveal">
+    <span class="role-item" data-en="Web Dev" data-ar="مطوّر ويب">Web Dev</span>
+    <span class="role-sep">/</span>
+    <span class="role-item" data-en="Cybersecurity" data-ar="أمن سيبراني">Cybersecurity</span>
+    <span class="role-sep">/</span>
+    <span class="role-item" data-en="Kali Linux Expert" data-ar="خبير كالي لينكس">Kali Linux Expert</span>
+    <span class="role-sep">/</span>
+    <span class="role-item" data-en="AI & Automation" data-ar="ذكاء اصطناعي">AI & Automation</span>
+    <span class="role-sep">/</span>
+    <span style="color:var(--muted)">Cairo 🇪🇬</span>
+  </p>
+  <p class="hero-desc reveal"
+    data-en="17-year-old developer from Egypt. Building <strong>web apps</strong>, mastering <strong>Kali Linux</strong> & <strong>cybersecurity</strong>, and working with <strong>AI automation</strong>. I turn complex tech into real solutions."
+    data-ar="مطوّر من مصر عنده 17 سنة. بيبني <strong>تطبيقات ويب</strong>، بيتقن <strong>كالي لينكس</strong> والأمن السيبراني، وبيشتغل بـ<strong>الذكاء الاصطناعي</strong>.">
+    17-year-old developer from Egypt. Building <strong>web apps</strong>, mastering <strong>Kali Linux</strong> &amp; <strong>cybersecurity</strong>, and working with <strong>AI automation</strong>. I turn complex tech into real solutions.
+  </p>
+  <div class="hero-cta reveal">
+    <a href="#" onclick="showPage('contact');return false" class="btn btn-primary" data-en="Get in touch" data-ar="تواصل معي">Get in touch</a>
+    <a href="#" onclick="showPage('linux');return false" class="btn btn-outline" style="border-color:rgba(23,147,209,.4);color:var(--kali2)" data-en="🐉 Kali Expertise" data-ar="🐉 خبرة كالي">🐉 Kali Expertise</a>
+    <a href="https://wa.me/201105900529" target="_blank" class="btn btn-outline btn-wa">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      <span data-en="WhatsApp" data-ar="واتساب">WhatsApp</span>
+    </a>
+    <a href="https://github.com/saadomarmohame-alt" target="_blank" class="btn btn-outline">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+  </div>
+  <div class="stats-row reveal">
+    <div class="stat"><span class="stat-num" data-count="8">0</span><span class="stat-label" data-en="Languages & Tools" data-ar="لغات وأدوات">Languages & Tools</span></div>
+    <div class="stat"><span class="stat-num" data-count="600">0</span><span class="stat-label" data-en="Kali Linux Tools" data-ar="أدوات كالي لينكس">Kali Linux Tools</span></div>
+    <div class="stat"><span class="stat-num" data-count="5">0</span><span class="stat-label" data-en="Services Offered" data-ar="خدمات متاحة">Services Offered</span></div>
+    <div class="stat"><span class="stat-num" data-count="17">0</span><span class="stat-label" data-en="Years Young" data-ar="سنة من العمر">Years Young</span></div>
+  </div>
+</div>
+<footer>
+  <div class="footer-left">© 2025 <strong>Omar Saad</strong> <span style="color:var(--border2);margin:0 .5rem">·</span> <span data-en="Built with passion at 17" data-ar="بُني بشغف في سن الـ 17">Built with passion at 17</span></div>
+  <div class="footer-social">
+    <a href="https://github.com/saadomarmohame-alt" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+    <a href="https://www.linkedin.com/in/omar-mohame-saad-a02057406" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a href="https://wa.me/201105900529" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+  </div>
+</footer>
+</div>
+
+<!-- ===== PAGE: ABOUT ===== -->
+<div class="page" id="page-about">
+<div class="section">
+  <p class="section-tag reveal" data-en="who am I" data-ar="من أنا">who am I</p>
+  <h2 class="section-title reveal"><span data-en="About Me" data-ar="عني">About Me</span></h2>
+  <div class="about-grid">
+    <div class="about-bio reveal">
+      <p data-en="I'm <strong>Omar Saad</strong>, a 17-year-old self-taught developer and security enthusiast from Cairo, Egypt. I started coding at 14 and never stopped." data-ar="أنا <strong>عمر سعد</strong>، مطوّر ذاتي التعلم عنده 17 سنة ومهتم بالأمن من القاهرة. بدأت البرمجة وعندي 14 سنة وما وقفتش.">I'm <strong>Omar Saad</strong>, a 17-year-old self-taught developer and security enthusiast from Cairo, Egypt. I started coding at 14 and never stopped.</p>
+      <p data-en="My journey took me from basic HTML pages to mastering <strong>Kali Linux</strong>, participating in <strong>CTF competitions</strong>, and building full-stack web applications. I believe in learning by doing." data-ar="رحلتي بدأت من صفحات HTML بسيطة لحد ما اتقنت <strong>كالي لينكس</strong>، اشتركت في <strong>مسابقات CTF</strong>، وبنيت تطبيقات ويب كاملة. أنا بيمن بالتعلم بالتطبيق.">My journey took me from basic HTML pages to mastering <strong>Kali Linux</strong>, participating in <strong>CTF competitions</strong>, and building full-stack web applications. I believe in learning by doing.</p>
+      <p data-en="When I'm not coding, I'm exploring security vulnerabilities, reading about new exploits, or helping others learn in the Arab tech community." data-ar="لما مش بشتغل في كود، بكون بستكشف ثغرات أمنية، بقرأ عن اكسبلويتس جديدة، أو بساعد غيري يتعلم في مجتمع التقنية العربي.">When I'm not coding, I'm exploring security vulnerabilities, reading about new exploits, or helping others learn in the Arab tech community.</p>
+    </div>
+    <div class="reveal">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-year">2022</div>
+            <div class="timeline-title" data-en="Started Web Development" data-ar="بدأ تطوير الويب">Started Web Development</div>
+            <div class="timeline-desc" data-en="First HTML/CSS/JS projects. Built my first real website." data-ar="أول مشاريع HTML/CSS/JS. بنيت أول موقع حقيقي.">First HTML/CSS/JS projects. Built my first real website.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot kali"></div>
+          <div class="timeline-content">
+            <div class="timeline-year">2023</div>
+            <div class="timeline-title" data-en="Discovered Kali Linux & Security" data-ar="اكتشف كالي لينكس والأمن">Discovered Kali Linux & Security</div>
+            <div class="timeline-desc" data-en="Installed Kali Linux, started learning ethical hacking and CTFs." data-ar="نزّل كالي لينكس، بدأ يتعلم الاختراق الأخلاقي ومسابقات CTF.">Installed Kali Linux, started learning ethical hacking and CTFs.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-year">2023</div>
+            <div class="timeline-title" data-en="Advanced Programming" data-ar="برمجة متقدمة">Advanced Programming</div>
+            <div class="timeline-desc" data-en="Python, TypeScript, PHP, C++. Full-stack development." data-ar="Python وTypeScript وPHP وC++. تطوير شامل.">Python, TypeScript, PHP, C++. Full-stack development.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot green"></div>
+          <div class="timeline-content">
+            <div class="timeline-year">2024–2025</div>
+            <div class="timeline-title" data-en="AI Integration & Freelancing" data-ar="دمج الذكاء الاصطناعي والعمل الحر">AI Integration & Freelancing</div>
+            <div class="timeline-desc" data-en="Working with AI tools, automation, and real client projects." data-ar="الشغل مع أدوات الذكاء الاصطناعي والأتمتة ومشاريع عملاء حقيقيين.">Working with AI tools, automation, and real client projects.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-left">© 2025 <strong>Omar Saad</strong></div>
+  <div class="footer-social">
+    <a href="https://github.com/saadomarmohame-alt" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+  </div>
+</footer>
+</div>
+
+<!-- ===== PAGE: SKILLS ===== -->
+<div class="page" id="page-skills">
+<div class="section">
+  <p class="section-tag reveal" data-en="what I do" data-ar="ماذا أفعل">what I do</p>
+  <h2 class="section-title reveal"><span data-en="Skills & Expertise" data-ar="المهارات والخبرات">Skills & Expertise</span></h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <span class="skill-icon">⚡</span>
+      <div class="skill-name" data-en="Web Development" data-ar="تطوير الويب">Web Development</div>
+      <div class="skill-desc" data-en="Building modern, responsive web applications from the ground up — frontend and backend." data-ar="بناء تطبيقات ويب حديثة ومتجاوبة من الصفر — واجهة أمامية وخلفية.">Building modern, responsive web applications from the ground up — frontend and backend.</div>
+      <div class="skill-tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span><span class="tag">TypeScript</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🔒</span>
+      <div class="skill-name" data-en="Cybersecurity" data-ar="الأمن السيبراني">Cybersecurity</div>
+      <div class="skill-desc" data-en="Ethical hacking, CTF competitions, penetration testing fundamentals, and security research." data-ar="اختراق أخلاقي، مسابقات CTF، أساسيات اختبار الاختراق، وبحث أمني.">Ethical hacking, CTF competitions, penetration testing fundamentals, and security research.</div>
+      <div class="skill-tags"><span class="tag">CTF</span><span class="tag">Pen Testing</span><span class="tag">Ethical Hacking</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🐉</span>
+      <div class="skill-name" data-en="Kali Linux" data-ar="كالي لينكس">Kali Linux</div>
+      <div class="skill-desc" data-en="Advanced proficiency with Kali Linux — tools, scripting, network analysis, and security testing workflows." data-ar="إتقان متقدم لكالي لينكس — الأدوات، السكريبتينج، تحليل الشبكات، وسير عمل الاختبار الأمني.">Advanced proficiency with Kali Linux — tools, scripting, network analysis, and security testing workflows.</div>
+      <div class="skill-tags"><span class="tag">Nmap</span><span class="tag">Metasploit</span><span class="tag">Wireshark</span><span class="tag">Burp Suite</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🤖</span>
+      <div class="skill-name" data-en="AI & Automation" data-ar="الذكاء الاصطناعي والأتمتة">AI & Automation</div>
+      <div class="skill-desc" data-en="Working with AI tools and models — prompting, automation pipelines, and integrating AI into real projects." data-ar="العمل مع أدوات ونماذج الذكاء الاصطناعي — برومبتينج وأتمتة ودمج الـ AI في مشاريع حقيقية.">Working with AI tools and models — prompting, automation pipelines, and integrating AI into real projects.</div>
+      <div class="skill-tags"><span class="tag">AI Tools</span><span class="tag">Automation</span><span class="tag">Prompting</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🐧</span>
+      <div class="skill-name" data-en="Linux Administration" data-ar="إدارة لينكس">Linux Administration</div>
+      <div class="skill-desc" data-en="System administration, bash scripting, server management, and Linux internals across multiple distributions." data-ar="إدارة النظام، سكريبتينج Bash، إدارة السيرفر، وداخليات لينكس عبر توزيعات متعددة.">System administration, bash scripting, server management, and Linux internals across multiple distributions.</div>
+      <div class="skill-tags"><span class="tag">Bash</span><span class="tag">System Admin</span><span class="tag">Networking</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <span class="skill-icon">🌐</span>
+      <div class="skill-name" data-en="Translation" data-ar="الترجمة">Translation</div>
+      <div class="skill-desc" data-en="Translating technical articles, books, and content — bridging language gaps in tech." data-ar="ترجمة المقالات التقنية والكتب وأي محتوى — لجسر الفجوة اللغوية في التكنولوجيا.">Translating technical articles, books, and content — bridging language gaps in tech.</div>
+      <div class="skill-tags"><span class="tag">Arabic</span><span class="tag">English</span><span class="tag">Tech Docs</span></div>
+    </div>
+  </div>
+
+  <hr class="divider" style="margin:3rem 0">
+  <p class="section-tag reveal" data-en="languages & tools" data-ar="اللغات والأدوات">languages & tools</p>
+  <h2 class="section-title reveal" style="margin-bottom:1.5rem"><span data-en="Tech Stack" data-ar="التقنيات">Tech Stack</span></h2>
+  <div class="tech-grid">
+    <div class="tech-pill reveal"><span class="emoji">🌐</span> HTML <span class="level" data-en="Mastered" data-ar="متقن">Mastered</span></div>
+    <div class="tech-pill reveal"><span class="emoji">🎨</span> CSS <span class="level" data-en="Mastered" data-ar="متقن">Mastered</span></div>
+    <div class="tech-pill reveal"><span class="emoji">⚡</span> JavaScript <span class="level" data-en="Mastered" data-ar="متقن">Mastered</span></div>
+    <div class="tech-pill reveal"><span class="emoji">💅</span> SASS <span class="level" data-en="Mastered" data-ar="متقن">Mastered</span></div>
+    <div class="tech-pill reveal"><span class="emoji">🔷</span> TypeScript <span class="level" data-en="Mastered" data-ar="متقن">Mastered</span></div>
+    <div class="tech-pill reveal"><span class="emoji">⚙️</span> C++ <span class="level" data-en="Mastered" data-ar="متقن">Mastered</span></div>
+    <div class="tech-pill reveal"><span class="emoji">🐘</span> PHP <span class="level" data-en="Mastered" data-ar="متقن">Mastered</span></div>
+    <div class="tech-pill reveal"><span class="emoji">🐍</span> Python <span class="level" data-en="Mastered" data-ar="متقن">Mastered</span></div>
+    <div class="tech-pill reveal"><span class="emoji">🐉</span> Kali Linux <span class="level" data-en="Expert" data-ar="خبير">Expert</span></div>
+    <div class="tech-pill reveal"><span class="emoji">🐧</span> Linux <span class="level" data-en="Expert" data-ar="خبير">Expert</span></div>
+    <div class="tech-pill reveal"><span class="emoji">📡</span> Networking <span class="level" data-en="Advanced" data-ar="متقدم">Advanced</span></div>
+    <div class="tech-pill reveal"><span class="emoji">🛡️</span> Bash Scripting <span class="level" data-en="Advanced" data-ar="متقدم">Advanced</span></div>
+  </div>
+</div>
+<footer>
+  <div class="footer-left">© 2025 <strong>Omar Saad</strong></div>
+  <div class="footer-social">
+    <a href="https://github.com/saadomarmohame-alt" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+  </div>
+</footer>
+</div>
+
+<!-- ===== PAGE: LINUX/KALI ===== -->
+<div class="page" id="page-linux">
+<div class="section">
+  <p class="section-tag reveal" data-en="security & systems" data-ar="الأمن والأنظمة">security & systems</p>
+  <h2 class="section-title reveal"><span data-en="Linux & Kali Linux" data-ar="لينكس وكالي لينكس">Linux & Kali Linux</span></h2>
+
+  <div class="kali-hero reveal">
+    <div class="kali-badge">🐉 <span data-en="Kali Linux Expert" data-ar="خبير كالي لينكس">Kali Linux Expert</span></div>
+    <div class="kali-title">
+      <div class="k1" data-en="Security Tools." data-ar="أدوات الأمن.">Security Tools.</div>
+      <div class="k2" data-en="Ethical Hacking." data-ar="اختراق أخلاقي.">Ethical Hacking.</div>
+    </div>
+    <p class="kali-desc" data-en="I've been using <strong>Kali Linux</strong> as my primary OS for security work since 2023. From network scanning to web app testing, I know the tools, the workflows, and the mindset of a security professional." data-ar="بستخدم <strong>كالي لينكس</strong> كنظام تشغيل أساسي لشغل الأمن من 2023. من فحص الشبكات لاختبار تطبيقات الويب، عارف الأدوات والعمليات وتفكير المتخصص الأمني.">I've been using <strong>Kali Linux</strong> as my primary OS for security work since 2023. From network scanning to web app testing, I know the tools, the workflows, and the mindset of a security professional.</p>
+  </div>
+
+  <div class="kali-grid reveal">
+    <div class="kali-card">
+      <span class="kali-card-icon">🔍</span>
+      <div class="kali-card-title" data-en="Reconnaissance & Scanning" data-ar="الاستطلاع والفحص">Reconnaissance & Scanning</div>
+      <div class="kali-card-desc" data-en="Network discovery, port scanning, OS fingerprinting, and service enumeration using industry-standard tools." data-ar="اكتشاف الشبكات، فحص المنافذ، بصمة نظام التشغيل، وعد الخدمات باستخدام أدوات معيارية.">Network discovery, port scanning, OS fingerprinting, and service enumeration using industry-standard tools.</div>
+      <div class="kali-tools"><span class="kali-tool">Nmap</span><span class="kali-tool">Masscan</span><span class="kali-tool">Netdiscover</span><span class="kali-tool">theHarvester</span></div>
+    </div>
+    <div class="kali-card">
+      <span class="kali-card-icon">🌐</span>
+      <div class="kali-card-title" data-en="Web Application Testing" data-ar="اختبار تطبيقات الويب">Web Application Testing</div>
+      <div class="kali-card-desc" data-en="Finding and testing OWASP Top 10 vulnerabilities, SQL injection, XSS, and authentication flaws." data-ar="إيجاد واختبار ثغرات OWASP الـ 10 الأوائل، SQL injection وXSS وعيوب المصادقة.">Finding and testing OWASP Top 10 vulnerabilities, SQL injection, XSS, and authentication flaws.</div>
+      <div class="kali-tools"><span class="kali-tool">Burp Suite</span><span class="kali-tool">SQLmap</span><span class="kali-tool">OWASP ZAP</span><span class="kali-tool">Nikto</span></div>
+    </div>
+    <div class="kali-card">
+      <span class="kali-card-icon">📡</span>
+      <div class="kali-card-title" data-en="Network Analysis" data-ar="تحليل الشبكات">Network Analysis</div>
+      <div class="kali-card-desc" data-en="Packet capture and analysis, traffic inspection, network protocol understanding, and MITM techniques." data-ar="التقاط وتحليل الحزم، فحص التراقيك، فهم بروتوكولات الشبكة، وتقنيات MITM.">Packet capture and analysis, traffic inspection, network protocol understanding, and MITM techniques.</div>
+      <div class="kali-tools"><span class="kali-tool">Wireshark</span><span class="kali-tool">tcpdump</span><span class="kali-tool">Ettercap</span><span class="kali-tool">ARP tools</span></div>
+    </div>
+    <div class="kali-card">
+      <span class="kali-card-icon">💥</span>
+      <div class="kali-card-title" data-en="Exploitation Framework" data-ar="إطار الاستغلال">Exploitation Framework</div>
+      <div class="kali-card-desc" data-en="Using Metasploit for controlled exploitation, payload generation, and post-exploitation in lab environments." data-ar="استخدام Metasploit للاستغلال المحكوم، توليد الـ payload، وما بعد الاستغلال في بيئات المختبر.">Using Metasploit for controlled exploitation, payload generation, and post-exploitation in lab environments.</div>
+      <div class="kali-tools"><span class="kali-tool">Metasploit</span><span class="kali-tool">msfvenom</span><span class="kali-tool">meterpreter</span></div>
+    </div>
+    <div class="kali-card">
+      <span class="kali-card-icon">🔐</span>
+      <div class="kali-card-title" data-en="Password & Crypto" data-ar="كلمات المرور والتشفير">Password & Crypto</div>
+      <div class="kali-card-desc" data-en="Hash cracking, dictionary attacks, wordlist generation, and understanding cryptographic weaknesses." data-ar="تكسير الهاش، هجمات القاموس، توليد قوائم الكلمات، وفهم نقاط ضعف التشفير.">Hash cracking, dictionary attacks, wordlist generation, and understanding cryptographic weaknesses.</div>
+      <div class="kali-tools"><span class="kali-tool">Hashcat</span><span class="kali-tool">John the Ripper</span><span class="kali-tool">Hydra</span><span class="kali-tool">CrackMapExec</span></div>
+    </div>
+    <div class="kali-card">
+      <span class="kali-card-icon">📝</span>
+      <div class="kali-card-title" data-en="CTF & Challenges" data-ar="مسابقات CTF والتحديات">CTF & Challenges</div>
+      <div class="kali-card-desc" data-en="Actively participating in Capture The Flag competitions — web, forensics, reverse engineering, and crypto challenges." data-ar="المشاركة الفعالة في مسابقات CTF — ويب، جنائيات رقمية، هندسة عكسية، وتحديات تشفير.">Actively participating in Capture The Flag competitions — web, forensics, reverse engineering, and crypto challenges.</div>
+      <div class="kali-tools"><span class="kali-tool">CTFd</span><span class="kali-tool">HackTheBox</span><span class="kali-tool">TryHackMe</span></div>
+    </div>
+  </div>
+
+  <div class="terminal reveal">
+    <div class="terminal-bar">
+      <div class="t-dot t-red"></div>
+      <div class="t-dot t-yellow"></div>
+      <div class="t-dot t-green"></div>
+      <span class="terminal-title">omar@kali:~$ — terminal</span>
+    </div>
+    <div class="terminal-body">
+      <div class="t-line"><span class="t-root">root@kali</span><span style="color:#8b949e">:</span><span style="color:var(--kali2)">~#</span><span class="t-cmd"> uname -a</span></div>
+      <div class="t-out t-green-text">Linux kali 6.8.11-amd64 #1 SMP PREEMPT_DYNAMIC Kali GNU/Linux (x86_64) GNU/Linux</div>
+      <div class="t-line" style="margin-top:.5rem"><span class="t-root">root@kali</span><span style="color:#8b949e">:</span><span style="color:var(--kali2)">~#</span><span class="t-cmd"> nmap -sV -O --script=vuln target.htb</span></div>
+      <div class="t-out">Starting Nmap 7.94 ...</div>
+      <div class="t-out t-green-text">PORT     STATE SERVICE  VERSION</div>
+      <div class="t-out">22/tcp   open  ssh      OpenSSH 8.4</div>
+      <div class="t-out">80/tcp   open  http     Apache httpd 2.4.51</div>
+      <div class="t-out t-yellow-text">443/tcp  open  https    vulnerable: CVE-2021-41773</div>
+      <div class="t-line" style="margin-top:.5rem"><span class="t-root">root@kali</span><span style="color:#8b949e">:</span><span style="color:var(--kali2)">~#</span><span class="t-cmd"> msfconsole -q</span></div>
+      <div class="t-out t-green-text">msf6 &gt; use exploit/multi/handler</div>
+      <div class="t-out">msf6 exploit(multi/handler) &gt; set payload linux/x64/meterpreter/reverse_tcp</div>
+      <div class="t-out t-green-text">payload =&gt; linux/x64/meterpreter/reverse_tcp</div>
+      <div class="t-line" style="margin-top:.5rem"><span class="t-root">root@kali</span><span style="color:#8b949e">:</span><span style="color:var(--kali2)">~#</span><span class="t-cmd"> <span class="t-cursor"></span></span></div>
+    </div>
+  </div>
+
+  <hr class="divider" style="margin:3rem 0">
+  <p class="section-tag reveal" data-en="linux distributions" data-ar="توزيعات لينكس">linux distributions</p>
+  <h2 class="section-title reveal" style="margin-bottom:1.5rem"><span data-en="Linux Experience" data-ar="خبرة لينكس">Linux Experience</span></h2>
+  <div class="linux-distros reveal">
+    <div class="distro-card" style="border-color:rgba(23,147,209,.3)">
+      <span class="distro-icon">🐉</span>
+      <div class="distro-name">Kali Linux</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:.25rem" data-en="Primary security OS" data-ar="نظام الأمن الأساسي">Primary security OS</div>
+      <div class="distro-level level-expert" data-en="Expert" data-ar="خبير">Expert</div>
+    </div>
+    <div class="distro-card" style="border-color:rgba(255,107,10,.2)">
+      <span class="distro-icon">🟠</span>
+      <div class="distro-name">Ubuntu</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:.25rem" data-en="Daily development" data-ar="التطوير اليومي">Daily development</div>
+      <div class="distro-level level-expert" data-en="Expert" data-ar="خبير">Expert</div>
+    </div>
+    <div class="distro-card" style="border-color:rgba(57,255,140,.2)">
+      <span class="distro-icon">🟢</span>
+      <div class="distro-name">Parrot OS</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:.25rem" data-en="Security & privacy" data-ar="الأمن والخصوصية">Security & privacy</div>
+      <div class="distro-level level-advanced" data-en="Advanced" data-ar="متقدم">Advanced</div>
+    </div>
+    <div class="distro-card">
+      <span class="distro-icon">🔵</span>
+      <div class="distro-name">Debian</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:.25rem" data-en="Server & stability" data-ar="السيرفر والاستقرار">Server & stability</div>
+      <div class="distro-level level-advanced" data-en="Advanced" data-ar="متقدم">Advanced</div>
+    </div>
+    <div class="distro-card">
+      <span class="distro-icon">🎯</span>
+      <div class="distro-name">Arch Linux</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:.25rem" data-en="Custom setups" data-ar="إعدادات مخصصة">Custom setups</div>
+      <div class="distro-level level-good" data-en="Intermediate" data-ar="متوسط">Intermediate</div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-left">© 2025 <strong>Omar Saad</strong></div>
+</footer>
+</div>
+
+<!-- ===== PAGE: PROJECTS ===== -->
+<div class="page" id="page-projects">
+<div class="section">
+  <p class="section-tag reveal" data-en="my work" data-ar="أعمالي">my work</p>
+  <h2 class="section-title reveal"><span data-en="Projects" data-ar="المشاريع">Projects</span></h2>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-img p1">🌐</div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">HTML</span><span class="project-tag">CSS</span><span class="project-tag">JavaScript</span></div>
+        <div class="project-title" data-en="Portfolio Website" data-ar="موقع البورتفوليو">Portfolio Website</div>
+        <div class="project-desc" data-en="This very portfolio — a fully custom single-page application with dark theme, animations, and bilingual support." data-ar="هذا البورتفوليو نفسه — تطبيق مخصص بالكامل بثيم داكن وأنيميشنز ودعم ثنائي اللغة.">This very portfolio — a fully custom single-page application with dark theme, animations, and bilingual support.</div>
+        <div class="project-footer">
+          <a href="https://github.com/saadomarmohame-alt" target="_blank" class="project-link"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg> GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-img p2">🔒</div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Python</span><span class="project-tag">Kali Linux</span><span class="project-tag">Bash</span></div>
+        <div class="project-title" data-en="Security Automation Scripts" data-ar="سكريبتات أتمتة الأمن">Security Automation Scripts</div>
+        <div class="project-desc" data-en="Custom Python and Bash scripts for automating recon tasks, scanning workflows, and CTF challenge solving." data-ar="سكريبتات Python وBash مخصصة لأتمتة مهام الاستطلاع وسير الفحص وحل تحديات CTF.">Custom Python and Bash scripts for automating recon tasks, scanning workflows, and CTF challenge solving.</div>
+        <div class="project-footer">
+          <a href="https://github.com/saadomarmohame-alt" target="_blank" class="project-link"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg> GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-img p3">🤖</div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Python</span><span class="project-tag">AI</span><span class="project-tag">Automation</span></div>
+        <div class="project-title" data-en="AI Automation Toolkit" data-ar="مجموعة أدوات الأتمتة بالذكاء الاصطناعي">AI Automation Toolkit</div>
+        <div class="project-desc" data-en="A collection of automation tools integrating AI APIs for content generation, data processing, and workflow optimization." data-ar="مجموعة أدوات أتمتة تدمج واجهات AI لتوليد المحتوى، معالجة البيانات، وتحسين سير العمل.">A collection of automation tools integrating AI APIs for content generation, data processing, and workflow optimization.</div>
+        <div class="project-footer">
+          <a href="https://github.com/saadomarmohame-alt" target="_blank" class="project-link"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg> GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-img p4">📚</div>
+      <div class="project-body">
+        <div class="project-tags"><span class="project-tag">Translation</span><span class="project-tag">Arabic</span><span class="project-tag">Technical</span></div>
+        <div class="project-title" data-en="Arabic Tech Translation" data-ar="الترجمة التقنية العربية">Arabic Tech Translation</div>
+        <div class="project-desc" data-en="Translating security articles, programming tutorials, and documentation into Arabic for the Arab tech community." data-ar="ترجمة مقالات الأمن ودروس البرمجة والتوثيق للعربية لمجتمع التقنية العربي.">Translating security articles, programming tutorials, and documentation into Arabic for the Arab tech community.</div>
+        <div class="project-footer">
+          <a href="https://www.linkedin.com/in/omar-mohame-saad-a02057406" target="_blank" class="project-link"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-left">© 2025 <strong>Omar Saad</strong></div>
+  <div class="footer-social">
+    <a href="https://github.com/saadomarmohame-alt" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+  </div>
+</footer>
+</div>
+
+<!-- ===== PAGE: CONTACT ===== -->
+<div class="page" id="page-contact">
+<div class="section">
+  <p class="section-tag reveal" data-en="get in touch" data-ar="تواصل معي">get in touch</p>
+  <h2 class="section-title reveal"><span data-en="Contact" data-ar="تواصل">Contact</span></h2>
+  <div class="contact-box reveal">
+    <h3 data-en="Let's work together" data-ar="لنعمل معاً">Let's work together</h3>
+    <p data-en="Whether you need a website built, something translated, want to learn coding, cybersecurity, or Kali Linux — I'm here and ready to help." data-ar="سواء محتاج موقع يتبني، حاجة تتترجم، أو عايز تتعلم برمجة أو أمن سيبراني أو كالي لينكس — أنا هنا ومستعد أساعدك.">Whether you need a website built, something translated, want to learn coding, cybersecurity, or Kali Linux — I'm here and ready to help.</p>
+    <div class="contact-links">
+      <a href="mailto:saadomarmohame@gmail.com" class="contact-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg><span>saadomarmohame@gmail.com</span></a>
+      <a href="https://wa.me/201105900529" target="_blank" class="contact-link wa"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span>+20 110 590 0529</span></a>
+      <a href="https://github.com/saadomarmohame-alt" target="_blank" class="contact-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg><span>github.com/saadomarmohame-alt</span></a>
+      <a href="https://www.linkedin.com/in/omar-mohame-saad-a02057406" target="_blank" class="contact-link li"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span>linkedin.com/in/omar-mohame-saad-a02057406</span></a>
+    </div>
+    <div class="location-pill">🇪🇬 <span data-en="Cairo, Egypt" data-ar="القاهرة، مصر">Cairo, Egypt</span></div>
+  </div>
+
+  <hr class="divider" style="margin:3rem 0">
+  <h2 class="section-title reveal" style="margin-bottom:1.5rem"><span data-en="Services" data-ar="الخدمات">Services</span></h2>
+  <div class="services-grid reveal">
+    <div class="service-card"><span class="service-num">01</span><span class="service-name" data-en="Web Development" data-ar="تطوير الويب">Web Development</span><span class="service-arrow">→</span></div>
+    <div class="service-card"><span class="service-num">02</span><span class="service-name" data-en="Cybersecurity Consulting" data-ar="استشارات الأمن السيبراني">Cybersecurity Consulting</span><span class="service-arrow">→</span></div>
+    <div class="service-card"><span class="service-num">03</span><span class="service-name" data-en="Kali Linux & Pen Testing" data-ar="كالي لينكس واختبار الاختراق">Kali Linux & Pen Testing</span><span class="service-arrow">→</span></div>
+    <div class="service-card"><span class="service-num">04</span><span class="service-name" data-en="AI Integration & Automation" data-ar="دمج الذكاء الاصطناعي والأتمتة">AI Integration & Automation</span><span class="service-arrow">→</span></div>
+    <div class="service-card"><span class="service-num">05</span><span class="service-name" data-en="Technical Translation (AR / EN)" data-ar="ترجمة تقنية (عربي / إنجليزي)">Technical Translation (AR / EN)</span><span class="service-arrow">→</span></div>
+    <div class="service-card"><span class="service-num">06</span><span class="service-name" data-en="Teaching & Mentorship" data-ar="التعليم والإرشاد">Teaching & Mentorship</span><span class="service-arrow">→</span></div>
+  </div>
+</div>
+<footer>
+  <div class="footer-left">© 2025 <strong>Omar Saad</strong> <span style="color:var(--border2);margin:0 .5rem">·</span> <span data-en="Built with passion at 17" data-ar="بُني بشغف في سن الـ 17">Built with passion at 17</span></div>
+  <div class="footer-social">
+    <a href="https://github.com/saadomarmohame-alt" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+    <a href="https://www.linkedin.com/in/omar-mohame-saad-a02057406" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a href="https://wa.me/201105900529" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+  </div>
+</footer>
+</div>
+
+<script>
+// ===== ANTI-INSPECT =====
+(function(){
+  // Disable right click
+  document.addEventListener('contextmenu',function(e){e.preventDefault();return false});
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
+  document.addEventListener('keydown',function(e){
+    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='i'||e.key==='J'||e.key==='j'||e.key==='C'||e.key==='c'))||(e.ctrlKey&&(e.key==='u'||e.key==='U'||e.key==='s'||e.key==='S'))){
+      e.preventDefault();e.stopPropagation();return false
+    }
+  });
+  // Detect devtools open via resize trick
+  var threshold=160;
+  function detectDevTools(){
+    if(window.outerWidth-window.innerWidth>threshold||window.outerHeight-window.innerHeight>threshold){
+      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace;font-size:18px;color:#ff6b9d;background:#050508;text-align:center;padding:2rem">🔒 DevTools Detected<br><small style="color:#7a7a9a;font-size:13px;margin-top:1rem;display:block">This page is protected.</small></div>';
+    }
+  }
+  window.addEventListener('resize',detectDevTools);
+  // Console warning
+  var _c=console.log;
+  console.log=console.warn=console.error=function(){};
+  // Debugger trap
+  setInterval(function(){(function(){})['constructor']('debugger')()},500);
+})();
+
+// ===== CURSOR =====
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px'});
+(function ar(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ar)})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.classList.add('hover');ring.classList.add('hover')});
+  el.addEventListener('mouseleave',()=>{cursor.classList.remove('hover');ring.classList.remove('hover')});
+});
+
+// ===== BG CANVAS =====
+const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');
+let W,H;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+const COLS=['#7c6aff','#ff6b9d','#00d9ff','#39ff8c'];
+class P{constructor(){this.reset(true)}reset(i){this.x=Math.random()*W;this.y=i?Math.random()*H:H+10;this.s=Math.random()*1.5+.3;this.vy=-(Math.random()*.3+.1);this.vx=(Math.random()-.5)*.15;this.c=COLS[Math.floor(Math.random()*4)];this.o=Math.random()*.5+.1;this.l=0;this.m=Math.random()*300+200}tick(){this.x+=this.vx;this.y+=this.vy;this.l++;if(this.l>this.m||this.y<-10)this.reset()}draw(){const f=this.l<30?this.l/30:this.l>this.m-30?(this.m-this.l)/30:1;ctx.globalAlpha=this.o*f;ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fillStyle=this.c;ctx.fill();ctx.globalAlpha=1}}
+const pts=Array.from({length:120},()=>new P());
+let t=0;
+function mesh(){
+  [[W*.2,H*.3,'rgba(124,106,255,.04)',.3,.2,80,60],[W*.8,H*.6,'rgba(255,107,157,.03)',.25,.35,100,80],[W*.5,H*.8,'rgba(0,217,255,.025)',.4,.3,120,60]].forEach(([bx,by,c,f1,f2,ox,oy])=>{
+    const g=ctx.createRadialGradient(bx+Math.sin(t*f1)*ox,by+Math.cos(t*f2)*oy,0,bx,by,W*.35);
+    g.addColorStop(0,c);g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  });
+}
+(function anim(){ctx.clearRect(0,0,W,H);t+=.005;mesh();pts.forEach(p=>{p.tick();p.draw()});requestAnimationFrame(anim)})();
+
+// ===== PROGRESS BAR =====
+const prog=document.getElementById('progress');
+window.addEventListener('scroll',()=>{prog.style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%'});
+
+// ===== REVEAL OBSERVER =====
+function initReveal(){
+  const obs=new IntersectionObserver(es=>{es.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*80)})},{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>{el.classList.remove('visible');obs.observe(el)});
+}
+initReveal();
+
+// ===== COUNT ANIMATION =====
+function animC(el,tgt){let s=null;(function step(ts){if(!s)s=ts;const p=Math.min((ts-s)/1200,1),e=1-Math.pow(1-p,3);el.textContent=Math.floor(e*tgt);if(p<1)requestAnimationFrame(step);else el.textContent=tgt+(tgt>=100?'+':'')})(performance.now())}
+function initCounters(){
+  const co=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!e.target.dataset.counted){e.target.dataset.counted='1';animC(e.target,+e.target.dataset.count)}})},{threshold:.5});
+  document.querySelectorAll('[data-count]').forEach(el=>{delete el.dataset.counted;co.observe(el)});
+}
+initCounters();
+
+// ===== SKILL CARD GLOW =====
+document.querySelectorAll('.skill-card').forEach(c=>{c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')})});
+
+// ===== PAGES =====
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  const navEl=document.getElementById('nav-'+name);
+  if(navEl)navEl.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>{initReveal();initCounters()},100);
+}
+
+// ===== MOBILE MENU =====
+function toggleMobile(){
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.getElementById('mobileBtn').textContent=document.getElementById('mobileMenu').classList.contains('open')?'✕':'☰';
+}
+
+// ===== LANGUAGE =====
+let isAr=false;
+function toggleLang(){
+  isAr=!isAr;
+  const h=document.documentElement;
+  h.lang=isAr?'ar':'en';h.dir=isAr?'rtl':'ltr';
+  document.body.classList.toggle('ar',isAr);
+  document.getElementById('langBtn').textContent=isAr?'🌐 English':'🌐 عربي';
+  document.querySelectorAll('[data-en][data-ar]').forEach(el=>{
+    const v=isAr?el.getAttribute('data-ar'):el.getAttribute('data-en');
+    if(v)v.includes('<')?el.innerHTML=v:el.textContent=v
+  });
+}
+</script>
+</body>
+</html>
